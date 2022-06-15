@@ -4,7 +4,7 @@ main: main.o menu.o
 
 main.o: main.c
 	@echo "Compilando e gerando o objeto main"
-	gcc -c main.c
+	gcc -c *.c
 
 menu.o: menu.c
 	@echo "Compilando e gerando o objeto menu"
