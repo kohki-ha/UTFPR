@@ -76,10 +76,6 @@ void cirar_personagem(Personagem *personagens)
         printf("\n\n\tNivel da classe: ");
         scanf("%d", &personagens[i].status.classe.nivel_classe);
 
-        printf("\n\n\tClasse: ");
-        setbuf(stdin, NULL);
-        fgets(personagens[i].status.classe.arma, MAX, stdin);
-
         printf("\n\n\tNome da classe: ");
         setbuf(stdin, NULL);
         fgets(personagens[i].status.classe.nome_classe, MAX, stdin);
@@ -114,6 +110,15 @@ void cirar_personagem(Personagem *personagens)
         setbuf(stdin, NULL);
         fgets(personagens[i].status.classe.bota, MAX, stdin);
         personagens[i].status.classe.bota[strcspn(personagens[i].status.classe.bota, "\n")] = '\0';
+
+        printf("\n\n\tNivel do Personagem: ");
+        scanf("%d", &personagens[i].status.nivel_personagem);
+
+                printf("\n\n\tReputação: ");
+        scanf("%d", &personagens[i].status.nivel_personagem);
+
+                printf("\n\n\tPenetração de armadura: ");
+        scanf("%d", &personagens[i].status.nivel_personagem);
     }
 }
 
