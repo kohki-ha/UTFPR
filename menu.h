@@ -40,11 +40,10 @@ typedef struct
 } Personagem;
 
 void menu(Personagem* personagens);
+void escrever_personagem(Personagem* perso);
 Personagem* criar_personagem(Personagem* personagens, int* tamanho);
-int validar_id(Personagem persogagem, int tamanho, int id);
-int validar_nome(Personagem persogagem, int tamanho, char* busca);
 void editar_personagem(Personagem* personagens, int tamanho);
-void listar_personagem(Personagem* personagens);
+void listar_personagem(Personagem * personagens, int tamanho);
 void excluir_personagem(Personagem* personagens);
 void pesquisar_personagem(Personagem* personagens);
 void exportar_personagem(Personagem* personagens);
