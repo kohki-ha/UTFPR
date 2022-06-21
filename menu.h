@@ -1,17 +1,14 @@
-#define MAX 31
-
-
 typedef struct
 {
     int id;
     int nivel_classe;
-    char nome_classe[MAX];
-    char arma[MAX];
-    char capacete[MAX];
-    char manto[MAX];
-    char peitoral[MAX];
-    char calca[MAX]; //calça
-    char bota[MAX];
+    char nome_classe[31];
+    char arma[31];
+    char capacete[31];
+    char manto[31];
+    char peitoral[31];
+    char calca[31]; //calça
+    char bota[31];
 } Classe;
 
 typedef struct
@@ -21,6 +18,7 @@ typedef struct
     int chance_critico;
     int reputacao;
     int penetracao_armadura;
+    int penetracao_magica;
     float velocidade;
     float dano_fisico;
     float dano_magico;
@@ -35,15 +33,17 @@ typedef struct
     int idade;
     int genero;
     float altura;
-    char nick_name[MAX];
+    char nick_name[31];
     char historia_personagem[700];
-    char raca[MAX]; //raça
+    char raca[31]; //raça
     Status status;
 } Personagem;
 
 void menu(Personagem* personagens);
-void cirar_personagem(Personagem* personagens);
-void editar_personagem(Personagem* personagens);
+Personagem* criar_personagem(Personagem* personagens, int* tamanho);
+int validar_id(Personagem persogagem, int tamanho, int id);
+int validar_nome(Personagem persogagem, int tamanho, char* busca);
+void editar_personagem(Personagem* personagens, int tamanho);
 void listar_personagem(Personagem* personagens);
 void excluir_personagem(Personagem* personagens);
 void pesquisar_personagem(Personagem* personagens);
