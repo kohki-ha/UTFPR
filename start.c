@@ -24,12 +24,13 @@ void iniciar_programa(Personagem *personagens)
             menu(personagens, numero_linhas, arq);
     }
     else
-    {        
+    {
         fwrite(&numero_linhas, sizeof(int), 1, arq);
         fwrite(personagens, sizeof(Personagem), numero_linhas, arq);
 
-        printf("\n\n%d\n\n", numero_linhas);
-        
+        printf("\n\n%d personagens\n\n", numero_linhas);
+
+        menu(personagens, numero_linhas, arq);
     }
 
     fclose(arq);
