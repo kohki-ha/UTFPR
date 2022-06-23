@@ -1,9 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <locale.h>
-#include "menu.h"
-#include "login.h"
+#include "header.h"
 
 /*
 Ao sair do programa, todos os dados devem ser salvos em arquivos binários no
@@ -14,13 +12,12 @@ usuário;
 
 int main(int argc, char const *argv[])
 {
-    setlocale(LC_ALL, "");
-    
+
     Personagem *personagens = malloc(10 * sizeof(Personagem));
 
     login();
 
-    menu(personagens);
+    iniciar_programa(personagens);
 
     return 0;
 }

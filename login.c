@@ -1,50 +1,53 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "login.h"
+#include "header.h"
+
+typedef struct
+{
+    char usuario[31], senha[31];
+} Log;
 
 void login()
 {
     FILE *arq;
-    char usuario[31], *senha, buffer[31];
-    arq = fopen("senha.txt", "r");
+    Log logar;
+    char buffer[31];
     int i;
 
-    senha = (char*) malloc(31 * sizeof(char));
+    arq = fopen("senha.dat", "rb");
 
     if (arq == NULL)
     {
-        arq = fopen("senha.txt", "w");
+        arq = fopen("senha.dat", "wb");
+
         if (arq == NULL)
         {
             printf("\n\tErro ao abrir o arquivo...");
+            exit(1);
         }
         else
         {
-            printf("\n\tCADASTRAR USUARIO\n\n");
+            printf("\n\tCADASTRAR USUARIO\n");
             printf("\tNome de usuario:\n\t");
             setbuf(stdin, NULL);
-            fgets(usuario, 31, stdin);
-            usuario[strcspn(usuario, "\n")] = '\0';
-            fputs(usuario, arq);
-            fputc('\n', arq);
+            fgets(logar.usuario, 31, stdin);
+            logar.usuario[strcspn(logar.usuario, "\n")] = '\0';
 
             printf("\n\tSenha:\n\t");
             setbuf(stdin, NULL);
-            fgets(senha, 31, stdin);
-            senha[strcspn(senha, "\n")] = '\0';
+            fgets(logar.senha, 31, stdin);
+            logar.senha[strcspn(logar.senha, "\n")] = '\0';
 
-            cifra_cesar(senha);
-            fputs(senha, arq);
+            cifra_cesar(logar.senha);
+            fwrite(&logar, sizeof(Log), 1, arq);
         }
     }
     else
     {
-        fgets(usuario, 31, arq);
-        usuario[strcspn(usuario, "\n")] = '\0';
-        fgets(senha, 31, arq);
-        descriptografar(senha);
-        printf("\n\tUsuario: %s / %s", usuario, senha);
+        fread(&logar, sizeof(Log), 1, arq);
+        descriptografar(logar.senha);
+        printf("\n\tUsuario: %s / %s", logar.usuario, logar.senha);
 
         while (1)
         {
@@ -52,7 +55,7 @@ void login()
             setbuf(stdin, NULL);
             fgets(buffer, 31, stdin);
             buffer[strcspn(buffer, "\n")] = '\0';
-            if (strcmp(buffer, senha) == 0)
+            if (strcmp(buffer, logar.senha) == 0)
             {
                 printf("\n\tSenha correta!\n\n");
                 break;
@@ -63,20 +66,18 @@ void login()
     fclose(arq);
 }
 
-void cifra_cesar(char* key)
+void cifra_cesar(char *key)
 {
-    while (*key != '\0')
+    for (size_t i = 0; key[i] != '\0'; i++)
     {
-        *key = (*key) + 2;
-        key++;
+        key[i] = key[i] + 3;
     }
 }
 
-void descriptografar(char* key)
+void descriptografar(char *key)
 {
-    while (*key != '\0')
+    for (size_t i = 0; key[i] != '\0'; i++)
     {
-        *key = (*key) - 2;
-        key++;
+        key[i] = key[i] - 3;
     }
 }

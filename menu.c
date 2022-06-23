@@ -1,11 +1,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "menu.h"
+#include "header.h"
 
-void menu(Personagem *personagens)
+void menu(Personagem *personagens, int num_linhas, FILE *arq)
 {
-    int tamanho = 0;
+    int tamanho = num_linhas;
     char opcao;
 
     while (1)
@@ -25,17 +25,43 @@ void menu(Personagem *personagens)
         if (opcao == '1')
             personagens = criar_personagem(personagens, &tamanho);
         else if (opcao == '2')
+        {
             editar_personagem(personagens, tamanho);
+            if (personagens_cadastrados(personagens, tamanho) == 0)
+                printf("\n\tNenhum personagem cadastrado!!!\n");
+        }
         else if (opcao == '3')
-            listar_personagem(personagens, tamanho);
+        {
+            for (size_t i = 0; i < tamanho; i++)
+                listar_personagem(personagens[i], tamanho);
+            if (personagens_cadastrados(personagens, tamanho) == 0)
+                printf("\n\tNenhum personagem cadastrado!!!\n");
+        }
         else if (opcao == '4')
-            excluir_personagem(personagens);
+        {
+            excluir_personagem(personagens, tamanho);
+            if (personagens_cadastrados(personagens, tamanho) == 0)
+                printf("\n\tNenhum personagem cadastrado!!!\n");
+        }
         else if (opcao == '5')
-            pesquisar_personagem(personagens);
+        {
+            pesquisar_personagem(personagens, tamanho);
+            if (personagens_cadastrados(personagens, tamanho) == 0)
+                printf("\n\tNenhum personagem cadastrado!!!\n");
+        }
         else if (opcao == '6')
-            exportar_personagem(personagens);
+        {
+            exportar_personagem(personagens, tamanho);
+            if (personagens_cadastrados(personagens, tamanho) == 0)
+                printf("\n\tNenhum personagem cadastrado!!!\n");
+        }
         else if (opcao == '0')
+        {
+            rewind(arq);
+            fwrite(&tamanho, sizeof(int), tamanho, arq);
+            fwrite(personagens, sizeof(Personagem), tamanho, arq);
             break;
+        }
         else
             printf("\n\n\tOpcao invalida!!!\n");
     }
@@ -43,11 +69,11 @@ void menu(Personagem *personagens)
 
 void inicializar_personagem(Personagem *personagem)
 {
-    personagem->id = -1;
+    personagem->id = 0;
     personagem->idade = 0;
     personagem->genero = 0;
     personagem->altura = 0;
-    personagem->status.id = -1;
+    personagem->status.id = 0;
     personagem->status.nivel_personagem = 0;
     personagem->status.chance_critico = 0;
     personagem->status.reputacao = 0;
@@ -58,7 +84,7 @@ void inicializar_personagem(Personagem *personagem)
     personagem->status.dano_magico = 0;
     personagem->status.armadura_fisica = 0;
     personagem->status.armadura_magica = 0;
-    personagem->status.classe.id = -1;
+    personagem->status.classe.id = 0;
     personagem->status.classe.nivel_classe = 0;
 }
 
@@ -195,130 +221,171 @@ Personagem *criar_personagem(Personagem *personagens, int *tamanho)
     return personagens;
 }
 
+int personagens_cadastrados(Personagem *personagens, int tamanho)
+{
+    int numero_personagens = 0;
+
+    for (size_t i = 0; i < tamanho; i++)
+    {
+        if (personagens[i].id > 0)
+            numero_personagens++;
+    }
+
+    return numero_personagens;
+}
+
 void editar_personagem(Personagem *personagens, int tamanho)
 {
     int id, i, encontrado = 0;
-    char op, busca[31];
+    char busca[31];
 
-    do
+    printf("\n\tId do personagem: ");
+    scanf("%d", &id);
+
+    for (size_t j = 0; j < tamanho; j++)
     {
-        printf("\n\n\t1 - Buscar por ID");
-        printf("\n\t2 - Buscar por nome\n\t");
-        setbuf(stdin, NULL);
-        scanf("%c", &op);
-    } while (op != '1' && op != '2');
-
-    if (op == '1')
-    {
-        printf("\n\tId do personagem: ");
-        scanf("%d", &id);
-
-        for (size_t j = 0; j < tamanho; j++)
+        if (id == personagens[j].id)
         {
-            if (id == personagens[j].id)
-            {
-                encontrado = 1;
-                i = id - 1;
-                printf("\n\n\tID encontrado!!!");
-                escrever_personagem(&personagens[i]);
-            }
+            encontrado = 1;
+            i = id - 1;
+            printf("\n\tID encontrado!!!");
+            escrever_personagem(&personagens[i]);
         }
-        if (encontrado == 0)
-            printf("\n\n\tID não encontrado...");
     }
+    if (encontrado == 0)
+        printf("\n\tID nao encontrado...");
+}
 
-    if (op == '2')
+void listar_personagem(Personagem personagens, int tamanho)
+{
+    if (personagens.id > 0 && personagens.status.id > 0 && personagens.status.classe.id > 0)
     {
-        printf("\n\tNome a ser buscado: ");
-        setbuf(stdin, NULL);
-        fgets(busca, 31, stdin);
-        busca[strcspn(busca, "\n")] = '\0';
-        printf("\n\na\n\n");
-
-        for (size_t j = 0; j < tamanho; j++)
-        {
-            if (strcmp(personagens[i].nick_name, busca) == 0)
-            {
-                i = personagens[i].id - 1;
-                escrever_personagem(personagens);
-            }
-        }
-        if (encontrado == 0)
-            printf("\n\n\tPersonagem não encontrado...");
+        printf("\n\n\t%2d\n", personagens.id);
+        printf("\tNickname: %s\n", personagens.nick_name);
+        printf("\tIdade: %d\n", personagens.idade);
+        printf("\tGenero: %d\n", personagens.genero);
+        printf("\tAltura: %.2f\n", personagens.altura);
+        printf("\tRaca: %s\n", personagens.raca);
+        printf("\tHistoria do personagem: %s\n", personagens.historia_personagem);
+        printf("\tClasse: %s\n", personagens.status.classe.nome_classe);
+        printf("\tNivel da classe: %d\n", personagens.status.classe.nivel_classe);
+        printf("\tArma: %s\n", personagens.status.classe.arma);
+        printf("\tCapacete: %s\n", personagens.status.classe.capacete);
+        printf("\tManto: %s\n", personagens.status.classe.manto);
+        printf("\tPeitoral: %s\n", personagens.status.classe.peitoral);
+        printf("\tCalca: %s\n", personagens.status.classe.calca);
+        printf("\tBota: %s\n", personagens.status.classe.bota);
+        printf("\tNivel do Personagem: %d\n", personagens.status.nivel_personagem);
+        printf("\tReputacao: %d\n", personagens.status.reputacao);
+        printf("\tarmadura Fisica: %.2f\n", personagens.status.armadura_fisica);
+        printf("\tArmadura Magica: %.2f\n", personagens.status.armadura_magica);
+        printf("\tPenetracao de armadura: %d\n", personagens.status.penetracao_armadura);
+        printf("\tPenetracao Magica: %d\n", personagens.status.penetracao_magica);
+        printf("\tDano Fisico: %.2f\n", personagens.status.dano_fisico);
+        printf("\tDano Magico: %.2f\n", personagens.status.dano_magico);
+        printf("\tChance de critico: %d\n", personagens.status.chance_critico);
+        printf("\tVelocidade: %.2f\n", personagens.status.velocidade);
     }
 }
 
-void listar_personagem(Personagem *personagens, int tamanho)
+void excluir_personagem(Personagem *personagens, int tamanho)
 {
+    int id, i, encontrado = 0;
+    char busca[31];
+
+    printf("\n\n\tID que deseja excluir: ");
+    scanf("%d", &id);
+
+    for (size_t j = 0; j < tamanho; j++)
+    {
+        if (id == personagens[j].id)
+        {
+            encontrado = 1;
+            i = id - 1;
+            personagens[i].id = 0;
+            personagens[i].status.id = 0;
+            personagens[i].status.classe.id = 0;
+
+            printf("\n\tPersonagem com ID = %d excluido!!!", id);
+        }
+    }
+    if (encontrado == 0)
+        printf("\n\tID nao encontrado...");
+}
+
+void pesquisar_personagem(Personagem *personagens, int tamanho)
+{
+    int id, i, encontrado = 0;
+
+    printf("\n\n\tID que deseja buscar: ");
+    scanf("%d", &id);
+
+    for (size_t j = 0; j < tamanho; j++)
+    {
+        if (id == personagens[j].id)
+        {
+            encontrado++;
+            i = id - 1;
+            listar_personagem(personagens[i], tamanho);
+
+            printf("\n\tPersonagem encontrado!!!");
+        }
+    }
+
+    if (encontrado == 0)
+        printf("\n\tPersonagem nao encontrado...");
+}
+
+void exportar_personagem(Personagem *personagens, int tamanho)
+{
+    FILE *arq = fopen("dados.csv", "w");
+
+    if (arq == NULL)
+    {
+        printf("Erro ao abrir o arquivo");
+        exit(1);
+    }
+
+    fprintf(arq, "ID_Personagem, ID_Status, ID_Classe, Nick_name, Idade, Genero, Altura, Raça, História, Classe, Nivel_Classe, Arma, Capacete, Manto, Peitoral, Calça, Bota, Nivel_personagem, Reputação, Armadura_fisica, Armadura_magica, Penetração_fisica, Penetração_mágica, Dano_físico, Dano_mágico, Chance_crítico, Velocidade\n");
     for (size_t i = 0; i < tamanho; i++)
     {
-        printf("\n\n\t%2d\n", personagens[i].id);
-
-        printf("\tNickname: %s\n", personagens[i].nick_name);
-
-        printf("\tIdade: %d\n", personagens[i].idade);
-
-        printf("\tGenero: %d\n", personagens[i].genero);
-
-        printf("\tAltura: %.2f\n", personagens[i].altura);
-
-        printf("\tRaca: %s\n", personagens[i].raca);
-
-        printf("\tHistoria do personagem: %s\n", personagens[i].historia_personagem);
-
-        printf("\tClasse: %s\n", personagens[i].status.classe.nome_classe);
-
-        printf("\tNivel da classe: %d\n", personagens[i].status.classe.nivel_classe);
-
-        printf("\tArma: %s\n", personagens[i].status.classe.arma);
-
-        printf("\tCapacete: %s\n", personagens[i].status.classe.capacete);
-
-        printf("\tManto: %s\n", personagens[i].status.classe.manto);
-
-        printf("\tPeitoral: %s\n", personagens[i].status.classe.peitoral);
-
-        printf("\tCalca: %s\n", personagens[i].status.classe.calca);
-
-        printf("\tBota: %s\n", personagens[i].status.classe.bota);
-
-        printf("\tNivel do Personagem: %d\n", personagens[i].status.nivel_personagem);
-
-        printf("\tReputacao: %d\n", personagens[i].status.reputacao);
-
-        printf("\tarmadura Fisica: %f\n", personagens[i].status.armadura_fisica);
-
-        printf("\tArmadura Magica: %f\n", personagens[i].status.armadura_magica);
-
-        printf("\tPenetracao de armadura: %d\n", personagens[i].status.penetracao_armadura);
-
-        printf("\tPenetracao Magica: %d\n", personagens[i].status.penetracao_magica);
-
-        printf("\tDano Fisico: %f\n", personagens[i].status.dano_fisico);
-
-        printf("\tDano Magico: %f\n", personagens[i].status.dano_magico);
-
-        printf("\tChance de critico: %d\n", personagens[i].status.chance_critico);
-
-        printf("\tVelocidade: %f\n", personagens[i].status.velocidade);
+        if (personagens[i].id > 0 && personagens[i].status.id > 0 && personagens[i].status.classe.id > 0)
+        {
+            fprintf(arq, "%2d, ", personagens[i].id);
+            fprintf(arq, "%2d, ", personagens[i].status.id);
+            fprintf(arq, "%2d, ", personagens[i].status.classe.id);
+            fprintf(arq, "%s, ", personagens[i].nick_name);
+            fprintf(arq, "%d, ", personagens[i].idade);
+            fprintf(arq, "%d, ", personagens[i].genero);
+            fprintf(arq, "%.2f, ", personagens[i].altura);
+            fprintf(arq, "%s, ", personagens[i].raca);
+            fprintf(arq, "%s, ", personagens[i].historia_personagem);
+            fprintf(arq, "%s, ", personagens[i].status.classe.nome_classe);
+            fprintf(arq, "%d, ", personagens[i].status.classe.nivel_classe);
+            fprintf(arq, "%s, ", personagens[i].status.classe.arma);
+            fprintf(arq, "%s, ", personagens[i].status.classe.capacete);
+            fprintf(arq, "%s, ", personagens[i].status.classe.manto);
+            fprintf(arq, "%s, ", personagens[i].status.classe.peitoral);
+            fprintf(arq, "%s, ", personagens[i].status.classe.calca);
+            fprintf(arq, "%s, ", personagens[i].status.classe.bota);
+            fprintf(arq, "%d, ", personagens[i].status.nivel_personagem);
+            fprintf(arq, "%d, ", personagens[i].status.reputacao);
+            fprintf(arq, "%.2f, ", personagens[i].status.armadura_fisica);
+            fprintf(arq, "%.2f, ", personagens[i].status.armadura_magica);
+            fprintf(arq, "%d, ", personagens[i].status.penetracao_armadura);
+            fprintf(arq, "%d, ", personagens[i].status.penetracao_magica);
+            fprintf(arq, "%.2f, ", personagens[i].status.dano_fisico);
+            fprintf(arq, "%.2f, ", personagens[i].status.dano_magico);
+            fprintf(arq, "%d, ", personagens[i].status.chance_critico);
+            fprintf(arq, "%.f\n", personagens[i].status.velocidade);
+        }
     }
-}
 
-void excluir_personagem(Personagem *personagens)
-{
-}
-
-void pesquisar_personagem(Personagem *personagens)
-{
-}
-
-void exportar_personagem(Personagem *personagens)
-{
+    fclose(arq);
 }
 
 void escrever_personagem(Personagem *perso)
 {
-    printf("\n\nc\n\n");
     printf("\n\n\tNome do personagem: ");
     setbuf(stdin, NULL);
     fgets(perso->nick_name, 31, stdin);
