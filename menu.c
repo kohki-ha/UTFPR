@@ -58,7 +58,7 @@ void menu(Personagem *personagens, int num_linhas, FILE *arq)
         else if (opcao == '0')
         {
             rewind(arq);
-            fwrite(&tamanho, sizeof(int), tamanho, arq);
+            fwrite(&tamanho, sizeof(int), 1, arq);
             fwrite(personagens, sizeof(Personagem), tamanho, arq);
             break;
         }
