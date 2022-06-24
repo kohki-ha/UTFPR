@@ -127,7 +127,7 @@ void escrever_personagem(Personagem *personagens);
  * @param tamanho
  * @return Personagem*
  */
-Personagem *criar_personagem(Personagem *personagens, int *tamanho);
+Personagem *inserir_personagem(Personagem *personagens, int *tamanho);
 
 /**
  * @brief Edita os dados do personagem

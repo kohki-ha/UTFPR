@@ -12,7 +12,7 @@ void menu(Personagem *personagens, int *num_personagens)
     {
         printf(ANSI_COLOR_BLUE "\n\n\t\tRPG" ANSI_COLOR_RESET);
         printf(ANSI_COLOR_BLUE "\n\tMENU - PERSONAGENS\n" ANSI_COLOR_RESET);
-        printf(ANSI_COLOR_YELLOW "\n\t1 - Criar" ANSI_COLOR_RESET);
+        printf(ANSI_COLOR_YELLOW "\n\t1 - Inserir" ANSI_COLOR_RESET);
         printf(ANSI_COLOR_YELLOW "\n\t2 - Editar" ANSI_COLOR_RESET);
         printf(ANSI_COLOR_YELLOW "\n\t3 - Listar" ANSI_COLOR_RESET);
         printf(ANSI_COLOR_YELLOW "\n\t4 - Excluir" ANSI_COLOR_RESET);
@@ -23,7 +23,7 @@ void menu(Personagem *personagens, int *num_personagens)
         scanf("%c", &opcao);
 
         if (opcao == '1')
-            personagens = criar_personagem(personagens, &tamanho);
+            personagens = inserir_personagem(personagens, &tamanho);
         else if (opcao == '2')
         {
             editar_personagem(personagens, tamanho);
@@ -86,7 +86,7 @@ void inicializar_personagem(Personagem *personagem)
     personagem->status.classe.nivel_classe = 0;
 }
 
-Personagem *criar_personagem(Personagem *personagens, int *tamanho)
+Personagem *inserir_personagem(Personagem *personagens, int *tamanho)
 {
     int tam_acrescentado = 0, sair = 0;
     while (1)
@@ -235,30 +235,60 @@ int personagens_cadastrados(Personagem *personagens, int tamanho)
 void editar_personagem(Personagem *personagens, int tamanho)
 {
     int id, i, encontrado = 0;
-    char busca[31];
+    char busca[31], op;
 
-    printf(ANSI_COLOR_CYAN "\n\n\tId do personagem: " ANSI_COLOR_RESET);
-    scanf("%d", &id);
+    printf(ANSI_COLOR_CYAN "\n\n\t1 - Editar por ID do Personagem" ANSI_COLOR_RESET);
+    printf(ANSI_COLOR_CYAN "\n\t2 - Editar por ID da Classe\n\t" ANSI_COLOR_RESET);
+    setbuf(stdin, NULL);
+    scanf("%c", &op);
 
-    for (size_t j = 0; j < tamanho; j++)
+    if (op == '1')
     {
-        if (id == personagens[j].id)
+        printf(ANSI_COLOR_CYAN "\n\n\tId do personagem: " ANSI_COLOR_RESET);
+        scanf("%d", &id);
+
+        for (size_t j = 0; j < tamanho; j++)
         {
-            encontrado = 1;
-            i = id - 1;
-            printf(ANSI_COLOR_GREEN "\n\tID encontrado!!!\n" ANSI_COLOR_RESET);
-            escrever_personagem(&personagens[i]);
+            if (id == personagens[j].id)
+            {
+                encontrado = 1;
+                i = id - 1;
+                printf(ANSI_COLOR_GREEN "\n\tID encontrado!!!\n" ANSI_COLOR_RESET);
+                escrever_personagem(&personagens[i]);
+            }
         }
+        if (encontrado == 0)
+            printf(ANSI_COLOR_RED "\n\tID nao encontrado...\n" ANSI_COLOR_RESET);
     }
-    if (encontrado == 0)
-        printf(ANSI_COLOR_RED "\n\tID nao encontrado...\n" ANSI_COLOR_RESET);
+    else if (op == '2')
+    {
+        printf(ANSI_COLOR_CYAN "\n\n\tId da Classe do personagem: " ANSI_COLOR_RESET);
+        scanf("%d", &id);
+
+        for (size_t j = 0; j < tamanho; j++)
+        {
+            if (id == personagens[j].status.classe.id)
+            {
+                encontrado = 1;
+                i = id - 1;
+                printf(ANSI_COLOR_GREEN "\n\tID encontrado!!!\n" ANSI_COLOR_RESET);
+                escrever_personagem(&personagens[i]);
+            }
+        }
+        if (encontrado == 0)
+            printf(ANSI_COLOR_RED "\n\tID nao encontrado...\n" ANSI_COLOR_RESET);
+    }
+    else
+        printf(ANSI_COLOR_RED "\n\n\tOpcao invalida!!!\n" ANSI_COLOR_RESET);
 }
 
 void listar_personagem(Personagem personagens, int tamanho)
 {
     if (personagens.id > 0 && personagens.status.id > 0 && personagens.status.classe.id > 0)
     {
-        printf("\x1b[34m" "\n\n\t%2d\n" ANSI_COLOR_RESET, personagens.id);
+        printf("\x1b[34m"
+               "\n\n\t%2d\n" ANSI_COLOR_RESET,
+               personagens.id);
         printf(ANSI_COLOR_CYAN "\tNickname: %s\n" ANSI_COLOR_RESET, personagens.nick_name);
         printf(ANSI_COLOR_CYAN "\tIdade: %d\n" ANSI_COLOR_RESET, personagens.idade);
         printf(ANSI_COLOR_CYAN "\tGenero: %d\n" ANSI_COLOR_RESET, personagens.genero);
@@ -289,48 +319,111 @@ void listar_personagem(Personagem personagens, int tamanho)
 void excluir_personagem(Personagem *personagens, int tamanho)
 {
     int id, i, encontrado = 0;
-    char busca[31];
+    char busca[31], op;
 
-    printf(ANSI_COLOR_CYAN "\n\n\tID que deseja excluir: " ANSI_COLOR_RESET);
-    scanf("%d", &id);
+    printf(ANSI_COLOR_CYAN "\n\n\t1 - Excluir por ID do Personagem" ANSI_COLOR_RESET);
+    printf(ANSI_COLOR_CYAN "\n\t2 - Excluir por ID da Classe\n\t" ANSI_COLOR_RESET);
+    setbuf(stdin, NULL);
+    scanf("%c", &op);
 
-    for (size_t j = 0; j < tamanho; j++)
+    if (op == '1')
     {
-        if (id == personagens[j].id)
-        {
-            encontrado = 1;
-            i = id - 1;
-            personagens[i].id = 0;
-            personagens[i].status.id = 0;
-            personagens[i].status.classe.id = 0;
+        printf(ANSI_COLOR_CYAN "\n\tID do personagem que deseja excluir: " ANSI_COLOR_RESET);
+        scanf("%d", &id);
 
-            printf(ANSI_COLOR_GREEN "\n\tPersonagem com ID = %d excluido!!!\n" ANSI_COLOR_RESET, id);
+        for (size_t j = 0; j < tamanho; j++)
+        {
+            if (id == personagens[j].id)
+            {
+                encontrado = 1;
+                i = id - 1;
+                personagens[i].id = 0;
+                personagens[i].status.id = 0;
+                personagens[i].status.classe.id = 0;
+
+                printf(ANSI_COLOR_GREEN "\n\tPersonagem com ID = %d excluido!!!\n" ANSI_COLOR_RESET, id);
+            }
         }
+        if (encontrado == 0)
+            printf(ANSI_COLOR_RED "\n\tID nao encontrado...\n" ANSI_COLOR_RESET);
     }
-    if (encontrado == 0)
-        printf(ANSI_COLOR_RED "\n\tID nao encontrado...\n" ANSI_COLOR_RESET);
+    else if (op == '2')
+    {
+        printf(ANSI_COLOR_CYAN "\n\tID da classe do personagem que deseja excluir: " ANSI_COLOR_RESET);
+        scanf("%d", &id);
+
+        for (size_t j = 0; j < tamanho; j++)
+        {
+            if (id == personagens[j].status.classe.id)
+            {
+                encontrado = 1;
+                i = id - 1;
+                personagens[i].id = 0;
+                personagens[i].status.id = 0;
+                personagens[i].status.classe.id = 0;
+
+                printf(ANSI_COLOR_GREEN "\n\tPersonagem com ID da Classe = %d excluido!!!\n" ANSI_COLOR_RESET, id);
+            }
+        }
+        if (encontrado == 0)
+            printf(ANSI_COLOR_RED "\n\tID nao encontrado...\n" ANSI_COLOR_RESET);
+    }
+    else
+        printf(ANSI_COLOR_RED "\n\n\tOpcao invalida!!!\n" ANSI_COLOR_RESET);
 }
 
 void pesquisar_personagem(Personagem *personagens, int tamanho)
 {
     int id, i, encontrado = 0;
-    printf(ANSI_COLOR_CYAN "\n\n\tID que deseja buscar: " ANSI_COLOR_RESET);
-    scanf("%d", &id);
+    char op;
 
-    for (size_t j = 0; j < tamanho; j++)
+    printf(ANSI_COLOR_CYAN "\n\n\t1 - Pesquisar por ID do Personagem" ANSI_COLOR_RESET);
+    printf(ANSI_COLOR_CYAN "\n\t2 - Pesquisar por ID da Classe\n\t" ANSI_COLOR_RESET);
+    setbuf(stdin, NULL);
+    scanf("%c", &op);
+
+    if (op == '1')
     {
-        if (id == personagens[j].id)
+        printf(ANSI_COLOR_CYAN "\n\n\tID do personagem que deseja buscar: " ANSI_COLOR_RESET);
+        scanf("%d", &id);
+
+        for (size_t j = 0; j < tamanho; j++)
         {
-            encontrado++;
-            i = id - 1;
-            listar_personagem(personagens[i], tamanho);
+            if (id == personagens[j].id)
+            {
+                encontrado++;
+                i = id - 1;
+                listar_personagem(personagens[i], tamanho);
 
-            printf(ANSI_COLOR_GREEN "\n\tPersonagem encontrado!!!\n" ANSI_COLOR_RESET);
+                printf(ANSI_COLOR_GREEN "\n\tPersonagem encontrado!!!\n" ANSI_COLOR_RESET);
+            }
         }
-    }
 
-    if (encontrado == 0)
-        printf(ANSI_COLOR_RED "\n\tPersonagem nao encontrado...\n" ANSI_COLOR_RESET);
+        if (encontrado == 0)
+            printf(ANSI_COLOR_RED "\n\tPersonagem nao encontrado...\n" ANSI_COLOR_RESET);
+    }
+    else if (op == '2')
+    {
+        printf(ANSI_COLOR_CYAN "\n\n\tID da Classe do personagem que deseja buscar: " ANSI_COLOR_RESET);
+        scanf("%d", &id);
+
+        for (size_t j = 0; j < tamanho; j++)
+        {
+            if (id == personagens[j].status.classe.id)
+            {
+                encontrado++;
+                i = id - 1;
+                listar_personagem(personagens[i], tamanho);
+
+                printf(ANSI_COLOR_GREEN "\n\tPersonagem encontrado!!!\n" ANSI_COLOR_RESET);
+            }
+        }
+
+        if (encontrado == 0)
+            printf(ANSI_COLOR_RED "\n\tPersonagem nao encontrado...\n" ANSI_COLOR_RESET);
+    }
+    else
+        printf(ANSI_COLOR_RED "\n\n\tOpcao invalida!!!\n" ANSI_COLOR_RESET);
 }
 
 void exportar_personagem(Personagem *personagens, int tamanho)

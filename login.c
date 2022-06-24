@@ -63,7 +63,7 @@ void login()
     {
         fread(&logar, sizeof(Log), 1, arq);
         descriptografar(logar.senha);
-        printf(ANSI_COLOR_YELLOW "\n\tUsuario: %s / %s" ANSI_COLOR_RESET, logar.usuario, logar.senha);
+        printf(ANSI_COLOR_YELLOW "\n\tUsuario: %s" ANSI_COLOR_RESET, logar.usuario);
 
         while (1)
         {
