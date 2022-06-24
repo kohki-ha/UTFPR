@@ -5,7 +5,7 @@
 
 void iniciar_programa(Personagem *personagens)
 {
-    int numero_linhas = 0;
+    int num_personagens = 0;
     Personagem temp;
     FILE *arq;
 
@@ -17,20 +17,24 @@ void iniciar_programa(Personagem *personagens)
 
         if (arq == NULL)
         {
-            printf("\n\tErro ao abrir o arquivo...");
+            printf(ANSI_COLOR_RED "\n\tErro ao abrir o arquivo..." ANSI_COLOR_RESET);
             exit(1);
         }
         else
-            menu(personagens, numero_linhas, arq);
+        {
+            menu(personagens, &num_personagens);
+            fwrite(&num_personagens, sizeof(int), 1, arq);
+            fwrite(personagens, sizeof(Personagem), num_personagens, arq);
+        }
     }
     else
     {
-        fwrite(&numero_linhas, sizeof(int), 1, arq);
-        fwrite(personagens, sizeof(Personagem), numero_linhas, arq);
+        fread(&num_personagens, sizeof(int), 1, arq);
+        fread(personagens, sizeof(Personagem), num_personagens, arq);
 
-        printf("\n\n%d personagens\n\n", numero_linhas);
+        printf(ANSI_COLOR_YELLOW "\n\tPersonagens carregados: %d\n" ANSI_COLOR_RESET, num_personagens);
 
-        menu(personagens, numero_linhas, arq);
+        menu(personagens, &num_personagens);
     }
 
     fclose(arq);

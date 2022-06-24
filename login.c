@@ -8,6 +8,22 @@ typedef struct
     char usuario[31], senha[31];
 } Log;
 
+void criptografar(char *key)
+{
+    for (size_t i = 0; key[i] != '\0'; i++)
+    {
+        key[i] = key[i] + 3;
+    }
+}
+
+void descriptografar(char *key)
+{
+    for (size_t i = 0; key[i] != '\0'; i++)
+    {
+        key[i] = key[i] - 3;
+    }
+}
+
 void login()
 {
     FILE *arq;
@@ -23,23 +39,23 @@ void login()
 
         if (arq == NULL)
         {
-            printf("\n\tErro ao abrir o arquivo...");
+            printf(ANSI_COLOR_RED "\n\tErro ao abrir o arquivo..." ANSI_COLOR_RESET);
             exit(1);
         }
         else
         {
-            printf("\n\tCADASTRAR USUARIO\n");
-            printf("\tNome de usuario:\n\t");
+            printf(ANSI_COLOR_YELLOW "\n\tCADASTRAR USUARIO\n" ANSI_COLOR_RESET);
+            printf(ANSI_COLOR_CYAN "\n\tNome de usuario: " ANSI_COLOR_RESET);
             setbuf(stdin, NULL);
             fgets(logar.usuario, 31, stdin);
             logar.usuario[strcspn(logar.usuario, "\n")] = '\0';
 
-            printf("\n\tSenha:\n\t");
+            printf(ANSI_COLOR_CYAN "\n\tSenha: " ANSI_COLOR_RESET);
             setbuf(stdin, NULL);
             fgets(logar.senha, 31, stdin);
             logar.senha[strcspn(logar.senha, "\n")] = '\0';
 
-            cifra_cesar(logar.senha);
+            criptografar(logar.senha);
             fwrite(&logar, sizeof(Log), 1, arq);
         }
     }
@@ -47,37 +63,25 @@ void login()
     {
         fread(&logar, sizeof(Log), 1, arq);
         descriptografar(logar.senha);
-        printf("\n\tUsuario: %s / %s", logar.usuario, logar.senha);
+        printf(ANSI_COLOR_YELLOW "\n\tUsuario: %s / %s" ANSI_COLOR_RESET, logar.usuario, logar.senha);
 
         while (1)
         {
-            printf("\n\tSenha: ");
+            printf(ANSI_COLOR_YELLOW "\n\tSenha: " ANSI_COLOR_RESET);
             setbuf(stdin, NULL);
             fgets(buffer, 31, stdin);
             buffer[strcspn(buffer, "\n")] = '\0';
             if (strcmp(buffer, logar.senha) == 0)
             {
-                printf("\n\tSenha correta!\n\n");
+                printf(ANSI_COLOR_GREEN "\n\tSenha correta!\n\n" ANSI_COLOR_RESET);
                 break;
+            }
+            else
+            {
+                printf(ANSI_COLOR_RED "\n\tSenha incorreta...\n\n" ANSI_COLOR_RESET);
             }
         }
     }
 
     fclose(arq);
-}
-
-void cifra_cesar(char *key)
-{
-    for (size_t i = 0; key[i] != '\0'; i++)
-    {
-        key[i] = key[i] + 3;
-    }
-}
-
-void descriptografar(char *key)
-{
-    for (size_t i = 0; key[i] != '\0'; i++)
-    {
-        key[i] = key[i] - 3;
-    }
 }
