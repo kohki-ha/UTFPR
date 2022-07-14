@@ -1,0 +1,19 @@
+library ieee;
+use ieee.std_logic_1164.all;
+use ieee.numeric_std.all;
+use ieee.std_logic_unsigned.all;
+
+entity painel_controle is
+	port(
+		switches   :  in std_logic_vector(1 downto 0);
+		led_funcao : out std_logic_vector(2 downto 0);
+		led_alerta : out std_logic_vector(3 downto ));
+		display0   : out std_logic_vector(6 downto 0);
+		display1   : out std_logic_vector(6 downto 0);
+		display2   : out std_logic_vector(6 downto 0);
+		display3   : out std_logic_vector(6 downto 0);
+		
+	);
+end entity painel_controle;
+
+architecture arq of painel_controle is
