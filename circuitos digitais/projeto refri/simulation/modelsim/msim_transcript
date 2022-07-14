@@ -1,0 +1,59 @@
+# Reading pref.tcl
+# do refri_run_msim_rtl_vhdl.do
+# if {[file exists rtl_work]} {
+# 	vdel -lib rtl_work -all
+# }
+# vlib rtl_work
+# vmap work rtl_work
+# Model Technology ModelSim - Intel FPGA Edition vmap 2020.1 Lib Mapping Utility 2020.02 Feb 28 2020
+# vmap work rtl_work 
+# Copying D:/intelFPGA_lite20.1/modelsim_ase/win32aloem/../modelsim.ini to modelsim.ini
+# Modifying modelsim.ini
+# 
+# vcom -93 -work work {C:/Users/kohki/Desktop/projeto refri/refri.vhd}
+# Model Technology ModelSim - Intel FPGA Edition vcom 2020.1 Compiler 2020.02 Feb 28 2020
+# Start time: 07:29:47 on Jun 13,2022
+# vcom -reportprogress 300 -93 -work work C:/Users/kohki/Desktop/projeto refri/refri.vhd 
+# -- Loading package STANDARD
+# -- Loading package TEXTIO
+# -- Loading package std_logic_1164
+# -- Loading package NUMERIC_STD
+# -- Compiling entity refri
+# -- Compiling architecture arq of refri
+# End time: 07:29:47 on Jun 13,2022, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# 
+vsim work.refri
+# vsim work.refri 
+# Start time: 07:29:52 on Jun 13,2022
+# Loading std.standard
+# Loading std.textio(body)
+# Loading ieee.std_logic_1164(body)
+# Loading ieee.numeric_std(body)
+# Loading work.refri(arq)
+wave create -driver freeze -pattern clock -initialvalue U -period 100ps -dutycycle 50 -starttime 0ps -endtime 1000ps sim:/refri/clk
+# Editable Wave items are not compatible with the wave window's standard undo-redo.  Standard undo-redo has been disabled.
+wave create -driver freeze -pattern random -initialvalue U -period 50ps -random_type Uniform -seed 5 -starttime 0ps -endtime 1000ps sim:/refri/rst
+wave create -driver freeze -pattern random -initialvalue U -period 150ps -random_type Uniform -seed 5 -starttime 0ps -endtime 1000ps sim:/refri/rst
+run
+run
+run
+run
+wave create -driver freeze -pattern random -initialvalue {Not Logged} -period 50ps -random_type Uniform -seed 5 -starttime 0ps -endtime 1000ps sim:/refri/enter
+# ** UI-Msg: (vish-4026) Value "not" does not represent a literal of the enumeration type.
+#Invalid value to -initialvalue switch: Not Logged
+# 
+wave create -driver freeze -pattern clock -initialvalue {Not Logged} -period 100ps -dutycycle 50 -starttime 0ps -endtime 1000ps sim:/refri/enter
+# ** UI-Msg: (vish-4026) Value "not" does not represent a literal of the enumeration type.
+#Invalid value to -initialvalue switch: Not Logged
+# 
+restart
+wave create -driver freeze -pattern random -initialvalue U -period 300ps -random_type Uniform -seed 5 -starttime 0ps -endtime 1000ps sim:/refri/enter
+wave create -driver expectedOutput -pattern random -initialvalue 0000000 -period 50ps -random_type Uniform -seed 5 -range 6 0 -starttime 0ps -endtime 1000ps sim:/refri/display1
+wave create -driver freeze -pattern clock -initialvalue {Not Logged} -period 200ps -dutycycle 50 -starttime 0ps -endtime 1000ps sim:/refri/rst
+# ** UI-Msg: (vish-4026) Value "not" does not represent a literal of the enumeration type.
+#Invalid value to -initialvalue switch: Not Logged
+# 
+wave create -driver freeze -pattern random -initialvalue 1 -period 150ps -random_type Uniform -seed 5 -starttime 0ps -endtime 1000ps sim:/refri/rst
+# End time: 07:35:16 on Jun 13,2022, Elapsed time: 0:05:24
+# Errors: 0, Warnings: 0

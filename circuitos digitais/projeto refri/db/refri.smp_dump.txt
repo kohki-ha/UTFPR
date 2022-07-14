@@ -1,0 +1,9 @@
+
+State Machine - |refri|estado
+Name estado.st_5 estado.st_1 estado.st_2 estado.st_3 estado.st_4 estado.st_0 
+estado.st_0 0 0 0 0 0 0 
+estado.st_4 0 0 0 0 1 1 
+estado.st_3 0 0 0 1 0 1 
+estado.st_2 0 0 1 0 0 1 
+estado.st_1 0 1 0 0 0 1 
+estado.st_5 1 0 0 0 0 1 
